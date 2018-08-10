@@ -1,6 +1,6 @@
 <template>
-  <div class=‘container’>
-    <home-header></home-header>
+  <div class='wrapper'>
+    <home-header :seller="seller"></home-header>
     <div class='tab border-1px'>
       <div class='tab-item'>
         <router-link to='/goods'>商品</router-link>
@@ -18,10 +18,34 @@
 
 <script>
 import HomeHeader from '@/pages/home/components/homeHeader/HomeHeader'
+import axios from 'axios'
 export default {
   name: 'Home',
   components: {
     HomeHeader: HomeHeader
+  },
+  data () {
+    return {
+      seller: {}
+    }
+  },
+  created () {
+    this.getData()
+  },
+  mounted () {
+  },
+  methods: {
+    getData () {
+      axios.get('/api/data.json').then((res) => {
+        this.distrubuteData(res.data)
+      })
+    },
+    distrubuteData (res) {
+      console.log(res)
+      this.seller = res.seller
+      this.goods = res.goods
+      this.ratings = res.ratings
+    }
   }
 }
 </script>
