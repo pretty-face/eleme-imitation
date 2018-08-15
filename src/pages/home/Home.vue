@@ -12,7 +12,7 @@
         <router-link to='/sellers'>商家</router-link>
       </div>
     </div>
-    <router-view :ratings="ratings" :goods="goods" :seller="seller"></router-view>
+    <router-view :ratings="ratings" :seller="seller"></router-view>
   </div>
 </template>
 
@@ -45,10 +45,6 @@ export default {
       this.seller = res.seller
       this.goods = res.goods
       this.ratings = res.ratings
-      console.log('goods:')
-      console.log(this.goods)
-      console.log('ratings:')
-      console.log(this.ratings)
     }
   }
 }

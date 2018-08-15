@@ -12,12 +12,31 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'Goods',
   props: {
     seller: Object,
-    goods: Array,
     ratings: Array
+  },
+  data () {
+    return {
+      goods: []
+    }
+  },
+  created () {
+    this.getData()
+  },
+  methods: {
+    getData () {
+      axios.get('/api/data.json').then((res) => {
+        this.distrubuteData(res.data)
+      })
+    },
+    distrubuteData (res) {
+      console.log(res)
+      this.goods = res.goods
+    }
   }
 }
 </script>
