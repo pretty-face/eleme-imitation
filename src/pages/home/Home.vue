@@ -12,7 +12,7 @@
         <router-link to='/sellers'>商家</router-link>
       </div>
     </div>
-    <router-view></router-view>
+    <router-view :ratings="ratings" :goods="goods" :seller="seller"></router-view>
   </div>
 </template>
 
@@ -26,13 +26,13 @@ export default {
   },
   data () {
     return {
-      seller: {}
+      seller: {},
+      ratings: [],
+      goods: []
     }
   },
   created () {
     this.getData()
-  },
-  mounted () {
   },
   methods: {
     getData () {
@@ -44,6 +44,10 @@ export default {
       console.log(res)
       this.seller = res.seller
       this.goods = res.goods
+      console.log('goods:')
+      console.log(this.goods)
+      console.log('ratings:')
+      console.log(this.ratings)
       this.ratings = res.ratings
     }
   }

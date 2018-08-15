@@ -19,7 +19,8 @@ export default new Router({
         {
           path: 'goods',
           name: 'goods',
-          component: Goods
+          component: Goods,
+          props: {goods: true}
         },
         {
           path: 'ratings',
