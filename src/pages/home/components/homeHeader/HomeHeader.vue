@@ -97,7 +97,7 @@ export default {
 </script>
 
 <style lang='stylus' scoped>
- @import "../../../../assets/css/icons.css"
+@import "../../../../assets/css/icons.css"
 @import "../../../../common/stylus/home.styl"
 
   .container
