@@ -45,6 +45,10 @@ export default {
       this.seller = res.seller
       this.goods = res.goods
       this.ratings = res.ratings
+      // console.log('goods:')
+      // console.log(this.goods)
+      // console.log('ratings:')
+      // console.log(this.ratings)
     }
   }
 }
