@@ -31,20 +31,43 @@
                   <span class="old-price" v-show="item.oldprice">¥{{item.oldprice}}</span>
                 </div>
               </div>
+              <div class="addgoods">
+                <Shopcart :food="item"></Shopcart>
+              </div>
             </div>
           </li>
         </ul>
       </div>
     </div>
     <div class="settle-wrapper">
-      <div class="shop-cart">
-        <div class="cart">
-          <span class="icon icon-shopping_cart"></span>
+      <div class="settle">
+        <div class="shop-cart">
+          <div class="cart">
+            <span class="icon icon-shopping_cart" :class="{'hight-light':selectedFoods.length}"></span>
+            <span class="count" v-show="selectedFoods.length">{{selectedFoods.length}}</span>
+          </div>
+          <span class="price">¥0</span>
+          <span class="tips">另需配送费¥4元</span>
         </div>
-        <span class="price">¥0</span>
-        <span class="tips">另需配送费¥4元</span>
+        <div class="distribution">¥20元起送</div>
       </div>
-      <div class="distribution">¥20元起送</div>
+      <div class="detail-wrapper" style="display: none">
+        <div class="header">
+          <span>购物车</span>
+          <span>清空</span>
+        </div>
+        <div class="list-wrapper" >
+          <ul>
+            <li class="list-item" v-for="(food, index) in selectedFoods" :key="index">
+              <div class="name">{{food.name}}</div>
+              <div class="calculeate">
+                <span class="price"></span>
+                <Shopcart></Shopcart>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -52,6 +75,7 @@
 <script>
 import axios from 'axios'
 import BScroll from 'better-scroll'
+import Shopcart from '../../../../components/shopcart-template/Shopcart'
 export default {
   name: 'Goods',
   props: {
@@ -62,8 +86,12 @@ export default {
     return {
       goods: [],
       heightList: [],
-      scrollY: 0
+      scrollY: 0,
+      count: 0
     }
+  },
+  components: {
+    Shopcart
   },
   created () {
     this.getData()
@@ -81,6 +109,17 @@ export default {
         }
       }
       return 0
+    },
+    selectedFoods () {
+      let select = []
+      this.goods.forEach((good) => {
+        good.foods.forEach((food) => {
+          if (food.count) {
+            select.push(food)
+          }
+        })
+      })
+      return select
     }
   },
   methods: {
@@ -91,7 +130,7 @@ export default {
     },
     _initScroll () {
       this.menuWrapper = new BScroll(this.$refs.menuWrapper, {click: true})
-      this.foodsWrapper = new BScroll(this.$refs.foodsWrapper, {probeType: 3})
+      this.foodsWrapper = new BScroll(this.$refs.foodsWrapper, {probeType: 3, click: true})
       this.foodsWrapper.on('scroll', (pos) => {
         this.scrollY = Math.abs(pos.y)
       })
@@ -175,7 +214,7 @@ export default {
     flex 1
     overflow hidden
     .goods-content
-      display inherit
+      position relative
       .title
         height .52rem
         line-height .52rem
@@ -225,52 +264,77 @@ export default {
               color rgb(147,153,159)
               font-size .2rem
               text-decoration line-through
+        .addgoods
+          position absolute
+          right .36rem
+          bottom .30rem
 .settle-wrapper
-  position fixed
-  display flex
-  bottom 0
-  left 0
-  z-index 50
-  width 100%
-  height .96rem
-  background-color #141d27
-  color rgba(255,255,255,0.4)
-  font-size 0
-  .shop-cart
+  .settle
+    position fixed
     display flex
-    flex 1
-    flex-direction row
-    .cart
-      background-color #141d27
-      height 1.08rem
-      width 1.08rem
-      border-radius 50%
-      margin-top -.15rem
-      margin-left .28rem
-      text-align center
-      margin-right .24rem
-      &::after
-        content ''
+    bottom 0
+    left 0
+    z-index 50
+    width 100%
+    height .96rem
+    background-color #141d27
+    color rgba(255,255,255,0.4)
+    font-size 0
+    .shop-cart
+      display flex
+      flex 1
+      flex-direction row
+      .cart
+        position relative
+        background-color #141d27
+        height 1.08rem
+        width 1.08rem
+        border-radius 50%
+        margin-top -.15rem
+        margin-left .28rem
+        text-align center
+        margin-right .24rem
+        &::after
+          content ''
+          display inline-block
+          width 0
+          height 100%
+          vertical-align middle
+        .icon
+          font-size .48rem
+          display inline-block
+          vertical-align middle
+          &.hight-light
+            display inline-block
+            padding .15rem
+            background-color #00a0dc
+            color #fff
+            border-radius 50%
+        .count
+          position absolute
+          display inline-block
+          right 0
+          height .32rem
+          line-height .32rem
+          width .52rem
+          border-radius .32rem
+          background-color #f01414
+          color #fff
+          font-size .18rem
+          font-weight 700
+          text-align center
+      .price, .tips
         display inline-block
-        width 0
-        height 100%
-        vertical-align middle
-      .icon
-        font-size .48rem
-        display inline-block
-        vertical-align middle
-    .price, .tips
-      display inline-block
+        line-height .96rem
+        font-size .32rem
+        font-weight 700
+      .tips
+        margin-left .48rem
+    .distribution
+      box-sizing border-box
       line-height .96rem
-      font-size .32rem
+      width 2.1rem
+      text-align center
+      font-size .24rem
       font-weight 700
-    .tips
-      margin-left .48rem
-  .distribution
-    box-sizing border-box
-    line-height .96rem
-    width 2.1rem
-    text-align center
-    font-size .24rem
-    font-weight 700
 </style>
