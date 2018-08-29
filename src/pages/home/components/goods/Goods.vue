@@ -32,7 +32,7 @@
                 </div>
               </div>
               <div class="addgoods">
-                <Shopcart :food="item"></Shopcart>
+                <Shopcart @drop="drop" :food="item"></Shopcart>
               </div>
             </div>
           </li>
@@ -50,6 +50,15 @@
           <span class="tips">另需配送费¥4元</span>
         </div>
         <div class="distribution">¥20元起送</div>
+      </div>
+      <div class="balls">
+       <template v-for="ball in balls">
+          <transition name="drop" v-on:before-enter="beforeDrop" @enter="enterDrop" @after-enter="afterDrop">
+            <div class="ball" v-if="ball.show">
+              <div class="inner"></div>
+            </div>
+          </transition>
+        </template>
       </div>
       <div class="detail-wrapper" style="display: none">
         <div class="header">
@@ -87,7 +96,23 @@ export default {
       goods: [],
       heightList: [],
       scrollY: 0,
-      count: 0
+      balls: [{
+        show: false
+      },
+      {
+        show: false
+      },
+      {
+        show: false
+      },
+      {
+        show: false
+      },
+      {
+        show: false
+      }],
+      dropBalls: [],
+      fold: true
     }
   },
   components: {
@@ -145,7 +170,7 @@ export default {
       }
     },
     selectMenu (index) {
-      console.log(index)
+      // console.log(index)
       let el = this.$refs.goodsContent[index]
       console.log(el)
       this.foodsWrapper.scrollToElement(el, 300)
@@ -156,6 +181,55 @@ export default {
         this._initScroll()
         this._calculateHeight()
       })
+    },
+    drop (el) {
+      let balls = this.balls
+      for (var i = 0; i < balls.length; i++) {
+        if (!balls[i].show) {
+          balls[i].show = true
+          balls[i].el = el
+          this.dropBalls.push(balls[i])
+          return
+        }
+      }
+      // console.log(balls)
+    },
+    beforeDrop (el) {
+      let count = this.balls.length
+      while (count--) {
+        let ball = this.balls[count]
+        if (ball.show) {
+          let pos = this.balls[count].el.getBoundingClientRect()
+          let x = pos.left - 32
+          let y = -(window.innerHeight - pos.top - 24)
+          el.style.display = ''
+          el.style.webkitTransform = `translate3d(0,${y}px,0)`
+          el.style.transform = `translate3d(0,-${y}px,0)`
+          let inner = el.getElementsByClassName('inner')[0]
+          inner.style.webkitTransform = `translate3d(${x}px,0,0)`
+          inner.style.transform = `translate3d(${x}px,0,0)`
+        }
+      }
+    },
+    enterDrop (el, done) {
+      /* eslint-disable no-unused-vars */
+      let rf = el.offsetHeight
+      this.$nextTick(() => {
+        el.style.display = ''
+        el.style.webkitTransform = 'translate3d(0,0,0)'
+        el.style.transform = 'translate3d(0,0,0)'
+        let inner = el.getElementsByClassName('inner')[0]
+        inner.style.webkitTransform = 'translate3d(0,0,0)'
+        inner.style.transform = 'translate3d(0,0,0)'
+        el.addEventListener('transitionend', done)
+      })
+    },
+    afterDrop (el) {
+      let ball = this.dropBalls.shift()
+      if (ball) {
+        ball.show = false
+        el.style.display = 'none'
+      }
     }
   }
 }
@@ -337,4 +411,17 @@ export default {
       text-align center
       font-size .24rem
       font-weight 700
+  .balls
+    .ball
+      position fixed
+      left .64rem
+      bottom .48rem
+      z-index 200
+      transition: all .5s cubic-bezier(0.49, -0.29, 0.75, 0.41)
+      .inner
+        height .32rem
+        width .32rem
+        border-radius 50%
+        background-color #00a0dc
+        transition: all .5s linear
 </style>

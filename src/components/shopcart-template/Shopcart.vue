@@ -1,11 +1,11 @@
 <template>
     <div class='shopcart-wrapper'>
       <transition name="fade">
-        <div class="decrease" v-if="food.count >0" @click="decreaseGoods">
+        <div class="decrease" v-show="hasGoods" @click="decreaseGoods">
           <span class="icon-remove_circle_outline"></span>
         </div>
       </transition>
-      <div class="count" v-if="food.count > 0">{{food.count}}</div>
+      <div class="count" v-show="hasGoods">{{food.count}}</div>
       <div class="increase" @click="increaseGoods">
         <span class="icon-add_circle"></span>
       </div>
@@ -18,12 +18,19 @@ export default {
   name: 'Shopcart',
   data () {
     return {
-      hasGoods: 0
     }
   },
   props: {
     food: {
-      type: Object
+      type: Object,
+      default () {
+        return {}
+      }
+    }
+  },
+  computed: {
+    hasGoods () {
+      return this.food.count
     }
   },
   methods: {
@@ -38,7 +45,7 @@ export default {
       } else {
         this.food.count++
       }
-      console.log(this.food)
+      this.$emit('drop', event.target)
     }
   }
 }
