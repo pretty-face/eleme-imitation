@@ -1,12 +1,12 @@
 <template>
     <div class='shopcart-wrapper'>
       <transition name="fade">
-        <div class="decrease" v-show="hasGoods" @click="decreaseGoods">
+        <div class="decrease" v-show="hasGoods" @click.stop.prevent="decreaseGoods">
           <span class="icon-remove_circle_outline"></span>
         </div>
       </transition>
       <div class="count" v-show="hasGoods">{{food.count}}</div>
-      <div class="increase" @click="increaseGoods">
+      <div class="increase" @click.stop.prevent="increaseGoods">
         <span class="icon-add_circle"></span>
       </div>
     </div>
@@ -34,12 +34,18 @@ export default {
     }
   },
   methods: {
-    decreaseGoods () {
+    decreaseGoods (event) {
+      if (!event._constructed) {
+        return
+      }
       if (this.food.count) {
         this.food.count--
       }
     },
-    increaseGoods () {
+    increaseGoods (event) {
+      if (!event._constructed) {
+        return
+      }
       if (!this.food.count) {
         Vue.set(this.food, 'count', 1)
       } else {
